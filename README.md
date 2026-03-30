@@ -15,7 +15,7 @@ A smart toll plaza monitoring system that tracks vehicle activity, alerts, and a
 - JavaScript
 
 ## 🌐 Live Demo
-https://anushkaverse10.github.io/ai-toll-survillience/
+https://anushkaverse10.github.io/ai-toll-surveillance/
 
 ## 📸 Screenshots
 <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/b09e582a-5f60-445e-9ed9-9fe77901bf8c" />
