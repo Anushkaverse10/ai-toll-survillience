@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Dashboard | Kolkata</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="notifications.html"><i class="fas fa-bell"></i> Live Notifications</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="map.html"><i class="fas fa-map-marked-alt"></i> Map</a></li>
+            <li><a href="cameras.html"><i class="fas fa-video"></i> Cameras</a></li>
+            <li><a href="contact.html"><i class="fas fa-address-book"></i> Contact</a></li>
+            <li><a href="admin.html"><i class="fas fa-user-shield"></i> Admin</a></li>
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Last Sync: 2 min ago</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Server Load: 32%</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>API: Operational</span>
+        </div>
+        <div class="system-status-item">
+            <span>AI Model: v3.2.1</span>
+        </div>
+        <div class="system-status-item">
+            <span>Active Tolls: 18/22</span>
+        </div>
+        <div class="system-status-item">
+            <span>Camera Uptime: 98.7%</span>
+        </div>
+    </div>
+
+    <!-- Dashboard Filters -->
+    <div class="dashboard-filters card">
+        <h3><i class="fas fa-filter"></i> Filters</h3>
+        <div class="filter-group">
+            <label for="dateFilter">Date:</label>
+            <input type="date" id="dateFilter">
+        </div>
+        <div class="filter-group">
+            <label for="highwayFilter">Highway:</label>
+            <select id="highwayFilter">
+                <option value="all">All Highways</option>
+                <option value="nh16">NH16</option>
+                <option value="nh12">NH12</option>
+                <option value="sh1">SH1</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="vehicleFilter">Vehicle Type:</label>
+            <select id="vehicleFilter">
+                <option value="all">All Vehicles</option>
+                <option value="car">Car</option>
+                <option value="truck">Truck</option>
+                <option value="bus">Bus</option>
+                <option value="bike">Motorcycle</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="wantedFilter">Wanted Vehicles:</label>
+            <select id="wantedFilter">
+                <option value="all">All Vehicles</option>
+                <option value="wanted">Wanted Only</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="cameraFilter">Camera Health:</label>
+            <select id="cameraFilter">
+                <option value="all">All Cameras</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Dashboard Metrics -->
+    <section class="dashboard">
+        <h2><i class="fas fa-tachometer-alt"></i> Police Dashboard</h2>
+        <div class="dashboard-metrics">
+            <div class="analytics-card card">
+                <div class="analytics-metric">
+                    <h3>Live Toll Count</h3>
+                    <p id="toll-count">0</p>
+                </div>
+                <div class="analytics-trend">
+                    <p class="trend-up"><i class="fas fa-arrow-up"></i> +8% from yesterday</p>
+                    <canvas class="sparkline" id="tollSparkline"></canvas>
+                </div>
+            </div>
+            <div class="analytics-card card">
+                <div class="analytics-metric">
+                    <h3>Total Scans Today</h3>
+                    <p id="total-scans">0</p>
+                </div>
+                <div class="analytics-trend">
+                    <p class="trend-up"><i class="fas fa-arrow-up"></i> +12% from yesterday</p>
+                    <canvas class="sparkline" id="scansSparkline"></canvas>
+                </div>
+            </div>
+            <div class="analytics-card card">
+                <div class="analytics-metric">
+                    <h3>Alerts Triggered</h3>
+                    <p id="alerts-triggered">0</p>
+                </div>
+                <div class="analytics-trend">
+                    <p class="trend-down"><i class="fas fa-arrow-down"></i> -3% from yesterday</p>
+                    <canvas class="sparkline" id="alertsSparkline"></canvas>
+                </div>
+            </div>
+            <div class="analytics-card card">
+                <div class="analytics-metric">
+                    <h3>Wanted Vehicle Hits</h3>
+                    <p id="wanted-hits">0</p>
+                </div>
+                <div class="analytics-trend">
+                    <p class="trend-up"><i class="fas fa-arrow-up"></i> +5% from yesterday</p>
+                    <canvas class="sparkline" id="wantedSparkline"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Section -->
+        <div class="ai-insights card">
+            <h3><i class="fas fa-brain"></i> AI Insights</h3>
+            <div class="insight-item">
+                <h4>Predicted Traffic Congestion</h4>
+                <div class="insight-metric">
+                    <span class="status-indicator status-warning"></span>
+                    <p>Moderate congestion expected on NH16 between 5-7 PM</p>
+                </div>
+            </div>
+            <div class="insight-item">
+                <h4>High-Risk Vehicle Probability</h4>
+                <div class="insight-metric">
+                    <span class="status-indicator status-critical"></span>
+                    <p>2 vehicles with 85%+ match to watchlist</p>
+                </div>
+            </div>
+            <div class="insight-item">
+                <h4>Repeat Offender Patterns</h4>
+                <div class="insight-metric">
+                    <span class="status-indicator status-critical"></span>
+                    <p>Vehicle WB12AB3456 detected 3 times this week</p>
+                </div>
+            </div>
+            <div class="insight-item">
+                <h4>Top 5 Flagged Tolls</h4>
+                <ol>
+                    <li>Vidyasagar Setu (12 alerts)</li>
+                    <li>Second Hooghly Bridge (8 alerts)</li>
+                    <li>Kona Expressway (5 alerts)</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content card">
+            <div class="secure-login-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Police Network Login</span>
+            </div>
+            <h3>Authentication Required</h3>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="authUsername" placeholder="Username">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="authPassword" placeholder="Password">
+            </div>
+            <button id="authSubmit" class="btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <div class="encrypted-connection">
+                <span class="status-indicator status-normal"></span>
+                <span>Encrypted Connection Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Popup -->
+    <div id="alertPopup" class="alert-popup card">
+        <div class="alert-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> WANTED VEHICLE DETECTED</h3>
+            <button id="closeAlert" class="btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="alert-content">
+            <div class="alert-image">
+                <img src="assets/wanted-vehicle.jpg" alt="Wanted Vehicle">
+                <div class="confidence-score">92% Match</div>
+            </div>
+            <div class="alert-details">
+                <p><strong>License Plate:</strong> WB12AB3456</p>
+                <p><strong>Location:</strong> Vidyasagar Setu Toll Plaza</p>
+                <p><strong>Time:</strong> 14:30:45</p>
+                <p><strong>Status:</strong> <span class="status-indicator status-critical"></span> CRITICAL</p>
+            </div>
+        </div>
+        <div class="alert-actions">
+            <button class="btn critical"><i class="fas fa-phone-alt"></i> Notify Police</button>
+            <button class="btn"><i class="fas fa-car"></i> Track Vehicle</button>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script src="scripts/script.js"></script>
+    <script>
+        // Show authentication modal on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById("authModal");
+            modal.style.display = "flex";
+
+            // Handle authentication
+            document.getElementById("authSubmit").addEventListener("click", function () {
+                const username = document.getElementById("authUsername").value;
+                const password = document.getElementById("authPassword").value;
+                if (username === "police" && password === "admin123") {
+                    modal.style.display = "none";
+                    startDashboardUpdates();
+                    gsap.from(".analytics-card", { opacity: 0, y: 20, duration: 0.5, stagger: 0.1 });
+                } else {
+                    alert("Incorrect credentials!");
+                }
+            });
+
+            // Close alert popup
+            document.getElementById("closeAlert").addEventListener("click", function () {
+                document.getElementById("alertPopup").style.display = "none";
+            });
+
+            // Simulate real-time dashboard updates
+            function startDashboardUpdates() {
+                setInterval(() => {
+                    document.getElementById("toll-count").textContent = Math.floor(Math.random() * 200);
+                    document.getElementById("total-scans").textContent = Math.floor(Math.random() * 10000);
+                    document.getElementById("alerts-triggered").textContent = Math.floor(Math.random() * 20);
+                    document.getElementById("wanted-hits").textContent = Math.floor(Math.random() * 5);
+
+                    // Randomly trigger alert popup
+                    if (Math.random() > 0.8) {
+                        document.getElementById("alertPopup").style.display = "block";
+                    }
+                }, 5000);
+
+                // Create sparkline charts
+                createSparkline('tollSparkline', [12, 15, 18, 16, 20, 22, 19]);
+                createSparkline('scansSparkline', [120, 150, 130, 180, 200, 220, 190]);
+                createSparkline('alertsSparkline', [2, 3, 1, 4, 2, 5, 3]);
+                createSparkline('wantedSparkline', [0, 1, 0, 0, 1, 2, 1]);
+            }
+
+            function createSparkline(id, data) {
+                const ctx = document.getElementById(id).getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['', '', '', '', '', '', ''],
+                        datasets: [{
+                            data: data,
+                            borderColor: 'rgba(62, 146, 204, 0.8)',
+                            borderWidth: 1.5,
+                            fill: false,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: false }
+                        },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        },
+                        elements: {
+                            point: { radius: 0 }
+                        }
+                    }
+                });
+            }
+
+            // Theme toggle functionality
+            document.getElementById('themeToggle').addEventListener('click', function () {
+                document.body.classList.toggle('light-mode');
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-moon');
+                icon.classList.toggle('fa-sun');
+            });
+        });
+    </script>
+</body>
+
+</html>

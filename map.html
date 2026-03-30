@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Toll Tracking Map | Kolkata</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- Leaflet CSS for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Leaflet Heatmap -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-heat@0.2.0/dist/leaflet-heat.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i><span class="sidebar-collapsed-text">Home</span></a>
+            </li>
+            <li><a href="notifications.html"><i class="fas fa-bell"></i><span class="sidebar-collapsed-text">Live
+                        Notifications</span></a></li>
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i><span
+                        class="sidebar-collapsed-text">Dashboard</span></a></li>
+            <li><a href="map.html"><i class="fas fa-map-marked-alt"></i><span
+                        class="sidebar-collapsed-text">Map</span></a></li>
+            <li><a href="cameras.html"><i class="fas fa-video"></i><span
+                        class="sidebar-collapsed-text">Cameras</span></a></li>
+            <li><a href="contact.html"><i class="fas fa-address-book"></i><span
+                        class="sidebar-collapsed-text">Contact</span></a></li>
+            <li><a href="admin.html"><i class="fas fa-user-shield"></i><span
+                        class="sidebar-collapsed-text">Admin</span></a></li>
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i><span
+                        class="sidebar-collapsed-text">Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Last Sync: 2 min ago</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Server Load: 32%</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>API: Operational</span>
+        </div>
+        <div class="system-status-item">
+            <span>AI Model: v3.2.1</span>
+        </div>
+        <div class="system-status-item">
+            <span>Active Tolls: 18/22</span>
+        </div>
+        <div class="system-status-item">
+            <span>Camera Uptime: 98.7%</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="map-container">
+            <h2><i class="fas fa-map-marked-alt"></i> Live Toll Tracking Map (Kolkata)</h2>
+            <div class="map-filters card">
+                <h3><i class="fas fa-filter"></i> Map Filters</h3>
+                <div class="filter-group">
+                    <label for="heatmapToggle">Heatmap:</label>
+                    <select id="heatmapToggle">
+                        <option value="none">None</option>
+                        <option value="traffic">Traffic Density</option>
+                        <option value="alerts">Alert Hotspots</option>
+                    </select>
+                </div>
+            </div>
+            <div id="map" style="height: 70vh; width: 100%;"></div>
+        </section>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- Leaflet JS for maps -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map centered on Kolkata
+        const map = L.map('map').setView([22.5726, 88.3639], 12);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add markers for Kolkata toll plazas with status indicators
+        const tollPlazas = [
+            { name: "Vidyasagar Setu Toll Plaza", lat: 22.5448, lng: 88.3416, status: "normal" },
+            { name: "Second Hooghly Bridge Toll Plaza", lat: 22.6236, lng: 88.3704, status: "warning" },
+            { name: "Kona Expressway Toll Plaza", lat: 22.4837, lng: 88.2891, status: "normal" },
+            { name: "New Town Toll Plaza", lat: 22.6123, lng: 88.4789, status: "critical" }
+        ];
+
+        // Create custom icons with status indicators
+        const createCustomIcon = (status) => {
+            return L.divIcon({
+                html: `
+                    <div class="toll-marker">
+                        <i class="fas fa-video"></i>
+                        <span class="status-indicator status-${status}"></span>
+                    </div>
+                `,
+                className: 'custom-marker',
+                iconSize: [30, 30]
+            });
+        };
+
+        // Add toll plaza markers to the map
+        tollPlazas.forEach(plaza => {
+            L.marker([plaza.lat, plaza.lng], { icon: createCustomIcon(plaza.status) })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="toll-popup">
+                        <h4>${plaza.name}</h4>
+                        <p><span class="status-indicator status-${plaza.status}"></span> Status: ${plaza.status}</p>
+                        <p>Vehicles Today: ${Math.floor(Math.random() * 5000)}</p>
+                        <p>Alerts: ${Math.floor(Math.random() * 10)}</p>
+                    </div>
+                `);
+        });
+
+        // Generate random heatmap data
+        const heatmapData = [];
+        for (let i = 0; i < 100; i++) {
+            heatmapData.push([
+                22.5 + (Math.random() - 0.5) * 0.2,
+                88.3 + (Math.random() - 0.5) * 0.2,
+                Math.random()
+            ]);
+        }
+
+        // Add heatmap layer
+        const heat = L.heatLayer(heatmapData, { radius: 20, blur: 15 }).addTo(map);
+
+        // Toggle heatmap based on selection
+        document.getElementById('heatmapToggle').addEventListener('change', function () {
+            if (this.value === 'none') {
+                map.removeLayer(heat);
+            } else {
+                heat.setLatLngs(heatmapData);
+                map.addLayer(heat);
+            }
+        });
+
+        // Theme toggle functionality
+        document.getElementById('themeToggle').addEventListener('click', function () {
+            document.body.classList.toggle('light-mode');
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+    </script>
+    <style>
+        .custom-marker {
+            background-color: rgba(10, 36, 99, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(62, 146, 204, 0.5);
+        }
+
+        .toll-marker i {
+            color: white;
+            font-size: 14px;
+        }
+
+        .toll-popup {
+            font-family: var(--font-primary);
+            padding: 0.5rem;
+        }
+
+        .toll-popup h4 {
+            margin: 0 0 0.5rem;
+            color: var(--dark-navy);
+        }
+
+        .toll-popup p {
+            margin: 0.25rem 0;
+            font-size: 0.875rem;
+        }
+    </style>
+</body>
+
+</html>

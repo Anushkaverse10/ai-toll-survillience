@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Notifications | Kolkata</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Rajdhani:wght@600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i><span class="sidebar-collapsed-text">Home</span></a>
+            </li>
+            <li><a href="notifications.html"><i class="fas fa-bell"></i><span class="sidebar-collapsed-text">Live
+                        Notifications</span></a></li>
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i><span
+                        class="sidebar-collapsed-text">Dashboard</span></a></li>
+            <li><a href="map.html"><i class="fas fa-map-marked-alt"></i><span
+                        class="sidebar-collapsed-text">Map</span></a></li>
+            <li><a href="cameras.html"><i class="fas fa-video"></i><span
+                        class="sidebar-collapsed-text">Cameras</span></a></li>
+            <li><a href="contact.html"><i class="fas fa-address-book"></i><span
+                        class="sidebar-collapsed-text">Contact</span></a></li>
+            <li><a href="admin.html"><i class="fas fa-user-shield"></i><span
+                        class="sidebar-collapsed-text">Admin</span></a></li>
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i><span
+                        class="sidebar-collapsed-text">Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Last Sync: 2 min ago</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Server Load: 32%</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>API: Operational</span>
+        </div>
+        <div class="system-status-item">
+            <span>AI Model: v3.2.1</span>
+        </div>
+        <div class="system-status-item">
+            <span>Active Tolls: 18/22</span>
+        </div>
+        <div class="system-status-item">
+            <span>Camera Uptime: 98.7%</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="notifications">
+            <h2><i class="fas fa-bell"></i> Live Notifications</h2>
+            <div class="notification-feed card" id="notificationFeed">
+                <!-- Notifications will be added dynamically -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Mock API for real-time fake data
+        const mockNotifications = [
+            {
+                id: 1,
+                type: "License Plate Detected",
+                plate: "WB12AB3456",
+                location: "Vidyasagar Setu Toll Plaza",
+                time: new Date().toLocaleTimeString(),
+                status: "normal"
+            },
+            {
+                id: 2,
+                type: "Face Recognized",
+                match: "Match",
+                location: "Second Hooghly Bridge Toll Plaza",
+                time: new Date().toLocaleTimeString(),
+                status: "normal"
+            },
+            {
+                id: 3,
+                type: "Suspicious Vehicle",
+                plate: "WB09CD7890",
+                location: "Kona Expressway Toll Plaza",
+                time: new Date().toLocaleTimeString(),
+                status: "warning"
+            },
+            {
+                id: 4,
+                type: "Tampering Alert",
+                location: "New Town Toll Plaza",
+                time: new Date().toLocaleTimeString(),
+                status: "critical"
+            }
+        ];
+
+        // Function to add notifications dynamically
+        function addNotification(notification) {
+            const notificationFeed = document.getElementById("notificationFeed");
+            const notificationCard = document.createElement("div");
+            notificationCard.className = notification - card;
+            notificationCard.innerHTML = `
+                <div class="notification-header">
+                    <span class="status-indicator status-${notification.status}"></span>
+                    <strong>${notification.type}</strong>
+                </div>
+                <p><strong>Plate:</strong> ${notification.plate || "N/A"}</p>
+                <p><strong>Location:</strong> ${notification.location}</p>
+                <p><strong>Time:</strong> ${notification.time}</p>
+            `;
+            notificationFeed.prepend(notificationCard);
+
+            // GSAP animation for new notifications
+            gsap.from(notificationCard, { opacity: 0, y: 20, duration: 0.5 });
+        }
+
+        // Simulate real-time notifications
+        setInterval(() => {
+            const randomNotification = mockNotifications[Math.floor(Math.random() * mockNotifications.length)];
+            addNotification(randomNotification);
+        }, 3000);
+
+        // Theme toggle functionality
+        document.getElementById('themeToggle').addEventListener('click', function () {
+            document.body.classList.toggle('light-mode');
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+    </script>
+</body>
+
+</html>

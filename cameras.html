@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Cameras | Kolkata</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i><span class="sidebar-collapsed-text">Home</span></a>
+            </li>
+            <li><a href="notifications.html"><i class="fas fa-bell"></i><span class="sidebar-collapsed-text">Live
+                        Notifications</span></a></li>
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i><span
+                        class="sidebar-collapsed-text">Dashboard</span></a></li>
+            <li><a href="map.html"><i class="fas fa-map-marked-alt"></i><span
+                        class="sidebar-collapsed-text">Map</span></a></li>
+            <li><a href="cameras.html"><i class="fas fa-video"></i><span
+                        class="sidebar-collapsed-text">Cameras</span></a></li>
+            <li><a href="contact.html"><i class="fas fa-address-book"></i><span
+                        class="sidebar-collapsed-text">Contact</span></a></li>
+            <li><a href="admin.html"><i class="fas fa-user-shield"></i><span
+                        class="sidebar-collapsed-text">Admin</span></a></li>
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i><span
+                        class="sidebar-collapsed-text">Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Last Sync: 2 min ago</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Server Load: 32%</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>API: Operational</span>
+        </div>
+        <div class="system-status-item">
+            <span>AI Model: v3.2.1</span>
+        </div>
+        <div class="system-status-item">
+            <span>Active Tolls: 18/22</span>
+        </div>
+        <div class="system-status-item">
+            <span>Camera Uptime: 98.7%</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="cameras">
+            <h2><i class="fas fa-video"></i> Live Camera Feeds (Kolkata)</h2>
+            <div class="camera-grid" id="cameraGrid">
+                <!-- Camera feeds will be added dynamically -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Fullscreen Camera Modal -->
+    <div id="fullscreenModal" class="modal">
+        <div class="modal-content">
+            <button id="closeFullscreen" class="btn"><i class="fas fa-compress"></i></button>
+            <div class="fullscreen-camera">
+                <div class="camera-live-tag">
+                    <span class="status-indicator status-normal"></span>
+                    LIVE ● Vidyasagar Setu Toll Plaza
+                </div>
+                <img src="assets/camera-placeholder.jpg" alt="Camera Feed" id="fullscreenCamera">
+                <div class="camera-controls">
+                    <div>
+                        <span>FPS: 30</span>
+                        <span class="status-indicator status-normal"></span>
+                        <span>Connection: Strong</span>
+                    </div>
+                    <div>
+                        <span>Last Refreshed: 2 sec ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Mock camera feeds with enhanced UI
+        const mockCameras = [
+            {
+                id: 1,
+                name: "Vidyasagar Setu Toll Plaza",
+                src: "assets/camera-placeholder.jpg",
+                status: "normal",
+                fps: 30,
+                connection: "strong",
+                lastRefreshed: "2 sec ago"
+            },
+            {
+                id: 2,
+                name: "Second Hooghly Bridge Toll Plaza",
+                src: "assets/camera-placeholder.jpg",
+                status: "warning",
+                fps: 24,
+                connection: "moderate",
+                lastRefreshed: "5 sec ago"
+            },
+            {
+                id: 3,
+                name: "Kona Expressway Toll Plaza",
+                src: "assets/camera-placeholder.jpg",
+                status: "normal",
+                fps: 30,
+                connection: "strong",
+                lastRefreshed: "1 sec ago"
+            },
+            {
+                id: 4,
+                name: "New Town Toll Plaza",
+                src: "assets/camera-placeholder.jpg",
+                status: "offline",
+                fps: 0,
+                connection: "none",
+                lastRefreshed: "offline"
+            }
+        ];
+
+        // Function to add camera feeds dynamically
+        function addCameraFeed(camera) {
+            const cameraGrid = document.getElementById("cameraGrid");
+            const cameraFeed = document.createElement("div");
+            cameraFeed.className = 'camera-feed card ${camera.status}';
+            cameraFeed.innerHTML = `
+                <div class="camera-live-tag">
+                    <span class="status-indicator status-${camera.status}"></span>
+                    LIVE ● ${camera.name}
+                </div>
+                <img src="${camera.src}" alt="Camera Feed" width="100%">
+                <div class="camera-controls">
+                    <div>
+                        <span>FPS: ${camera.fps}</span>
+                        <span class="status-indicator status-${camera.connection === "strong" ? "normal" : camera.connection === "moderate" ? "warning" : "offline"}"></span>
+                        <span>Connection: ${camera.connection}</span>
+                    </div>
+                    <div>
+                        <span>Last Refreshed: ${camera.lastRefreshed}</span>
+                    </div>
+                </div>
+                <div class="camera-actions">
+                    <button class="btn small" data-action="quality" data-camera="${camera.id}"><i class="fas fa-hd"></i> HD</button>
+                    <button class="btn small" data-action="snapshot" data-camera="${camera.id}"><i class="fas fa-camera"></i></button>
+                    <button class="btn small" data-action="fullscreen" data-camera="${camera.id}"><i class="fas fa-expand"></i></button>
+                </div>
+            `;
+            cameraGrid.appendChild(cameraFeed);
+
+            // GSAP animation for camera feeds
+            gsap.from(cameraFeed, { opacity: 0, y: 20, duration: 0.5 });
+
+            // Add event listeners for camera actions
+            cameraFeed.querySelectorAll('[data-action]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const action = this.getAttribute('data-action');
+                    if (action === 'fullscreen') {
+                        document.getElementById('fullscreenModal').style.display = 'flex';
+                        document.getElementById('fullscreenCamera').src = camera.src;
+                        document.querySelector('#fullscreenModal .camera-live-tag').innerHTML = `
+                            <span class="status-indicator status-${camera.status}"></span>
+                            LIVE ● ${camera.name}
+                        `;
+                    }
+                });
+            });
+        }
+
+        // Add all camera feeds
+        mockCameras.forEach(camera => addCameraFeed(camera));
+
+        // Close fullscreen modal
+        document.getElementById('closeFullscreen').addEventListener('click', function () {
+            document.getElementById('fullscreenModal').style.display = 'none';
+        });
+
+        // Theme toggle functionality
+        document.getElementById('themeToggle').addEventListener('click', function () {
+            document.body.classList.toggle('light-mode');
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Kolkata</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i><span class="sidebar-collapsed-text">Home</span></a>
+            </li>
+            <li><a href="notifications.html"><i class="fas fa-bell"></i><span class="sidebar-collapsed-text">Live
+                        Notifications</span></a></li>
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i><span
+                        class="sidebar-collapsed-text">Dashboard</span></a></li>
+            <li><a href="map.html"><i class="fas fa-map-marked-alt"></i><span
+                        class="sidebar-collapsed-text">Map</span></a></li>
+            <li><a href="cameras.html"><i class="fas fa-video"></i><span
+                        class="sidebar-collapsed-text">Cameras</span></a></li>
+            <li><a href="contact.html"><i class="fas fa-address-book"></i><span
+                        class="sidebar-collapsed-text">Contact</span></a></li>
+            <li><a href="admin.html"><i class="fas fa-user-shield"></i><span
+                        class="sidebar-collapsed-text">Admin</span></a></li>
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i><span
+                        class="sidebar-collapsed-text">Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Last Sync: 2 min ago</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>Server Load: 32%</span>
+        </div>
+        <div class="system-status-item">
+            <span class="status-indicator status-normal"></span>
+            <span>API: Operational</span>
+        </div>
+        <div class="system-status-item">
+            <span>AI Model: v3.2.1</span>
+        </div>
+        <div class="system-status-item">
+            <span>Active Tolls: 18/22</span>
+        </div>
+        <div class="system-status-item">
+            <span>Camera Uptime: 98.7%</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="admin-panel">
+            <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+
+            <!-- Role Selection -->
+            <div class="role-selector card">
+                <h3><i class="fas fa-user-tag"></i> Select Role</h3>
+                <div class="role-options">
+                    <button class="btn active" data-role="admin"><i class="fas fa-user-shield"></i> Admin</button>
+                    <button class="btn" data-role="police"><i class="fas fa-user-police"></i> Police</button>
+                    <button class="btn" data-role="nhai"><i class="fas fa-road"></i> NHAI Staff</button>
+                    <button class="btn" data-role="analyst"><i class="fas fa-chart-line"></i> Analyst</button>
+                </div>
+            </div>
+
+            <!-- Audit Logs -->
+            <div class="audit-logs card">
+                <h3><i class="fas fa-clipboard-list"></i> Audit Logs</h3>
+                <table class="audit-log-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2023-11-15 14:30:45</td>
+                            <td>admin_user</td>
+                            <td>Admin</td>
+                            <td>Login</td>
+                            <td>System access granted</td>
+                            <td><span class="status-indicator status-normal"></span> Success</td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:32:12</td>
+                            <td>police_officer_1</td>
+                            <td>Police</td>
+                            <td>Alert Acknowledged</td>
+                            <td>Wanted vehicle WB12AB3456</td>
+                            <td><span class="status-indicator status-normal"></span> Success</td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:35:22</td>
+                            <td>nhai_staff_2</td>
+                            <td>NHAI Staff</td>
+                            <td>Camera Adjustment</td>
+                            <td>Kona Expressway Toll Plaza</td>
+                            <td><span class="status-indicator status-normal"></span> Success</td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:40:03</td>
+                            <td>analyst_3</td>
+                            <td>Analyst</td>
+                            <td>Report Generated</td>
+                            <td>Traffic Pattern Analysis</td>
+                            <td><span class="status-indicator status-normal"></span> Success</td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:42:37</td>
+                            <td>admin_user</td>
+                            <td>Admin</td>
+                            <td>System Update</td>
+                            <td>AI Model v3.2.1 deployed</td>
+                            <td><span class="status-indicator status-normal"></span> Success</td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:45:18</td>
+                            <td>police_officer_1</td>
+                            <td>Police</td>
+                            <td>Alert Escalated</td>
+                            <td>Suspicious vehicle detected</td>
+                            <td><span class="status-indicator status-warning"></span> Pending</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- System Logs -->
+            <div class="system-logs card">
+                <h3><i class="fas fa-server"></i> System Logs</h3>
+                <div class="log-entry">
+                    <span class="timestamp">[2023-11-15 14:29:58]</span>
+                    <span class="status-indicator status-normal"></span>
+                    <span>System startup completed</span>
+                </div>
+                <div class="log-entry">
+                    <span class="timestamp">[2023-11-15 14:31:23]</span>
+                    <span class="status-indicator status-warning"></span>
+                    <span>High traffic detected on NH16</span>
+                </div>
+                <div class="log-entry">
+                    <span class="timestamp">[2023-11-15 14:34:07]</span>
+                    <span class="status-indicator status-critical"></span>
+                    <span>Camera offline: New Town Toll Plaza</span>
+                </div>
+                <div class="log-entry">
+                    <span class="timestamp">[2023-11-15 14:38:42]</span>
+                    <span class="status-indicator status-normal"></span>
+                    <span>Camera restored: New Town Toll Plaza</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Role-based UI toggle
+        document.querySelectorAll('.role-options button').forEach(button => {
+            button.addEventListener('click', function () {
+                document.querySelectorAll('.role-options button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // In a real app, this would change the UI based on the selected role
+                const role = this.getAttribute('data-role');
+                console.log('Switched to ${role} view');
+            });
+        });
+
+        // Theme toggle functionality
+        document.getElementById('themeToggle').addEventListener('click', function () {
+            document.body.classList.toggle('light-mode');
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+    </script>
+</body>
+
+</html>
